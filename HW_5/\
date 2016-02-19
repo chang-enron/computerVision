@@ -1,0 +1,293 @@
+#include <iostream>
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <cv.h>
+#include <ctime> 
+using namespace std;
+using namespace cv;
+Mat picInitialSrc(Mat pic, Mat src, int row, int col)
+{
+    int i,j;
+    for(i=0; i<col; i++)
+    {
+        for(j=0; j<row; j++)
+        {
+            pic.at<unsigned char>(i,j) = src.at<unsigned char>(i,j);
+        }
+    }
+    return pic;
+}
+
+void showSavePicture(Mat picture,string windowName,string saveName)
+{
+    namedWindow( windowName, WINDOW_AUTOSIZE   );    
+    imshow( windowName, picture );
+    imwrite( saveName , picture );
+}
+
+double Normal( void  )
+{
+    int a, i;
+    double b;
+    for(i = 0; i < 12; i++)
+    {
+        b+=((double) rand() / RAND_MAX );
+    }
+    return b - 6;
+}
+
+Mat GaussianNoiseAmplitude(int row, int col, int amplitude, Mat input)
+{
+    int i,j;
+    double ran = 0;
+    Mat GNA(row,col,CV_8U);
+    for(i=0; i<col; i++)
+    {
+        for(j=0; j<row; j++)
+        {
+            ran = Normal();
+            if(amplitude * ran + input.at<unsigned char>(i,j) >= 255)
+                GNA.at<unsigned char>(i,j) = 255;
+            else if(amplitude * ran + input.at<unsigned char>(i,j) <= 0)
+                GNA.at<unsigned char>(i,j) = 0;
+            else
+                GNA.at<unsigned char>(i,j) = input.at<unsigned char>(i,j) + amplitude * ran;
+        }
+    } 
+    return GNA;
+}
+
+Mat saltAndPepperUniform(int row, int col, double uniform, Mat input)
+{
+    int i,j;
+    Mat SAP(row, col, CV_8U);
+    for(i=0; i<col; i++)
+    {
+        for(j=0; j<row; j++)
+        {
+            double ran = ((double) rand() / RAND_MAX );
+            if(ran < uniform)
+                SAP.at<unsigned char>(i,j) = 0;
+            else if( ran > (1-uniform) )
+                SAP.at<unsigned char>(i,j) = 255;
+            else
+                SAP.at<unsigned char>(i,j) = input.at<unsigned char>(i,j);
+        }
+    }
+    return SAP;
+}
+int median(int arr[], int numOfelement)
+{
+    int i,j,k;
+    for(i=0; i<numOfelement; i++)
+    {
+        for(j=i; j<numOfelement; j++)
+        {
+            if(arr[i] > arr[j])
+            {
+                k = arr[i];
+                arr[i] = arr[j];
+                arr[j] = k;     
+            }
+        }
+    }
+    return arr[(numOfelement+1)/2-1];
+}
+
+Mat medianFilter(int row, int col, int boxSize, Mat input)
+{
+    int i, j, k;
+    int arr[boxSize];
+    Mat medianFilter(row, col, CV_8U);
+    if(boxSize == 9)
+    {
+        for(i=0; i<col; i++)
+        {
+            for(j=0; j<row; j++)
+            {
+                for(k=0; k<boxSize; k++)
+                {
+                    arr[k] = 0;
+                }
+                if(i>=1 && j>=1)
+                    arr[0] = input.at<unsigned char>(i-1,j-1);
+                if(j>=1)
+                    arr[1] = input.at<unsigned char>(i,j-1);
+
+                if(i<=510 && j>=1)
+                    arr[2] = input.at<unsigned char>(i+1,j-1);
+                if(i>=1)
+                    arr[3] = input.at<unsigned char>(i-1,j);
+
+                arr[4] = input.at<unsigned char>(i,j);
+                if(i<=510)
+                    arr[5] = input.at<unsigned char>(i+1,j);
+                if(i>=1 && j<=510)
+                    arr[6] = input.at<unsigned char>(i-1,j+1);
+                if(j<=510)
+                    arr[7] = input.at<unsigned char>(i,j+1);
+                if(i<=510 && j<=510)
+                    arr[8] = input.at<unsigned char>(i+1,j+1);
+                medianFilter.at<unsigned char>(i,j) = median(arr,boxSize);
+            }
+        }
+    }
+    else if(boxSize == 25)
+    {
+        for(i=0; i<col; i++)
+        {
+            for(j=0; j<row; j++)
+            {
+                for(k=0; k<boxSize; k++)
+                {
+                    arr[k] = 0;
+                }
+                if(i>=2 && j>=2)        arr[0] = input.at<unsigned char>(i-2, j-2);
+                if(i>=1 && j>=2)        arr[1] = input.at<unsigned char>(i-1, j-2);
+                if(j>=2)                arr[2] = input.at<unsigned char>(  i, j-2);
+                if(i<=510 && j>=2)      arr[3] = input.at<unsigned char>(i+1, j-2);
+                if(i<=509 && j>=2)      arr[4] = input.at<unsigned char>(i+2, j-2);
+
+                if(i>=2 && j>=1)        arr[5] = input.at<unsigned char>(i-2, j-1);
+                if(i>=1 && j>=1)        arr[6] = input.at<unsigned char>(i-1, j-1);
+                if(j>=1)                arr[7] = input.at<unsigned char>(  i, j-1);
+                if(i<=510 && j>=1)      arr[8] = input.at<unsigned char>(i+1, j-1);
+                if(i<=509 && j>=1)      arr[9] = input.at<unsigned char>(i+2, j-1);
+
+                if(i>=2)                arr[10] = input.at<unsigned char>(i-2,  j);
+                if(i>=1)                arr[11] = input.at<unsigned char>(i-1,  j);
+                arr[12] = input.at<unsigned char>(  i,  j);
+                if(i<=510)              arr[13] = input.at<unsigned char>(i+1,  j);
+                if(i<=509)              arr[14] = input.at<unsigned char>(i+2,  j);
+
+                if(i>=2 && j<=510)      arr[15] = input.at<unsigned char>(i-2, j+1);
+                if(i>=1 && j<=510)      arr[16] = input.at<unsigned char>(i-1, j+1);
+                if(j<=510)              arr[17] = input.at<unsigned char>(  i, j+1);
+                if(i<=510 && j<=510)    arr[18] = input.at<unsigned char>(i+1, j+1);
+                if(i<=509 && j<=510)    arr[19] = input.at<unsigned char>(i+2, j+1);
+
+                if(i>=2 && j<=509)      arr[20] = input.at<unsigned char>(i-2, j+2);
+                if(i>=1 && j<=509)      arr[21] = input.at<unsigned char>(i-1, j+2);
+                if(j<=509)              arr[22] = input.at<unsigned char>(  i, j+2);
+                if(i<=510 && j<=509)    arr[23] = input.at<unsigned char>(i+1, j+2);
+                if(i<=509 && j<=509)    arr[24] = input.at<unsigned char>(i+2, j+2);
+
+                medianFilter.at<unsigned char>(i,j) = median(arr,boxSize);
+            }
+        }
+    }//end else if    
+    return medianFilter;
+}
+
+Mat boxFilter(int row, int col, int boxSize, Mat input)
+{
+    int i, j, k;
+    int tempColor = 0;
+    int arr[boxSize];
+    Mat boxFilter(row, col, CV_8U);
+    if(boxSize == 9)
+    {
+        for(i=0; i<col; i++)
+        {
+            for(j=0; j<row; j++)
+            {
+                for(k=0; k<boxSize; k++)
+                {
+                    arr[k] = 0;
+                }
+                if(i>=1 && j>=1)
+                    arr[0] = input.at<unsigned char>(i-1,j-1);
+                if(j>=1)
+                    arr[1] = input.at<unsigned char>(i,j-1);
+
+                if(i<=510 && j>=1)
+                    arr[2] = input.at<unsigned char>(i+1,j-1);
+                if(i>=1)
+                    arr[3] = input.at<unsigned char>(i-1,j);
+
+                arr[4] = input.at<unsigned char>(i,j);
+                if(i<=510)
+                    arr[5] = input.at<unsigned char>(i+1,j);
+                if(i>=1 && j<=510)
+                    arr[6] = input.at<unsigned char>(i-1,j+1);
+                if(j<=510)
+                    arr[7] = input.at<unsigned char>(i,j+1);
+                if(i<=510 && j<=510)
+                    arr[8] = input.at<unsigned char>(i+1,j+1);
+
+                for(k=0; k<boxSize; k++)
+                {
+                    tempColor += arr[k]; 
+                }
+                //boxFilter.at<unsigned char>(i,j) = (tempColor / 9);
+                tempColor = 0;
+            }
+
+        }
+
+    }
+
+
+}
+
+int main(int argc,char** argv )
+{
+    Mat src;
+    src = imread("lena.bmp",CV_LOAD_IMAGE_GRAYSCALE);
+    srand(time(NULL));
+    int i, j, k;
+    int row = src.rows;
+    int col = src.cols;
+    Mat GNA10(row, col, CV_8U);
+    Mat GNA30(row, col, CV_8U);
+    Mat SAP005(row, col,CV_8U);
+    Mat SAP01(row,col,CV_8U);
+    /*--medianFilter--noise--noiseNum(Amplitude....)--Size---*/
+    Mat MF_GNA_10_9(row, col, CV_8U);
+    Mat MF_GNA_30_9(row, col, CV_8U);
+    Mat MF_GNA_10_25(row, col, CV_8U);
+    Mat MF_GNA_30_25(row, col, CV_8U);
+    Mat MF_SAP_005_9(row, col, CV_8U);
+    Mat MF_SAP_01_9(row, col, CV_8U);
+    Mat MF_SAP_005_25(row, col, CV_8U);
+    Mat MF_SAP_01_25(row, col, CV_8U);
+    /*--boxFilter--noise--noiseNum(Amplitude....)--Size---*/
+    Mat BF_GNA_10_9(row, col, CV_8U);
+
+
+    //cout << "==================Gaussian noise 10 & 30 ===============" << endl;
+    GNA10 = GaussianNoiseAmplitude(row, col, 10, src);
+    GNA30 = GaussianNoiseAmplitude(row, col, 30, src);
+    //cout << "==================salt-and-pepper noise 0.05 & 1 ===============" << endl;
+    SAP005 = saltAndPepperUniform(row, col, 0.05, src);
+    SAP01 = saltAndPepperUniform(row, col, 0.1, src);
+    //cout << "===============Median Filter==================" << endl;
+    MF_GNA_10_9 = medianFilter(row, col, 9, GNA10);
+    MF_GNA_30_9 = medianFilter(row, col, 9, GNA30);
+    MF_GNA_10_25 = medianFilter(row, col, 25, GNA10);
+    MF_GNA_30_25 = medianFilter(row, col, 25, GNA30);
+    MF_SAP_005_9 = medianFilter(row, col, 9, SAP005);
+    MF_SAP_01_9 = medianFilter(row, col, 9, SAP01);
+    MF_SAP_005_25 = medianFilter(row, col, 25, SAP005);
+    MF_SAP_01_25 = medianFilter(row, col, 25, SAP01);
+    //cout << "===============Box Filter==================" << endl;
+    BF_GNA_10_9 = boxFilter(row, col, 9, GNA10);
+
+    //cout << ==================show & save picture =============== << endl;
+    showSavePicture(src,"src","src.bmp");
+    showSavePicture(GNA10,"GNA10","GNA10.bmp");
+    showSavePicture(GNA30,"GNA30","GNA30.bmp");
+    showSavePicture(SAP005,"SAP005","SAP005.bmp");
+    showSavePicture(SAP01,"SAP01","SAP01.bmp");
+    showSavePicture(MF_GNA_10_9,"MF_GNA_10_9","MF_GNA_10_9.bmp");
+    showSavePicture(MF_GNA_30_9,"MF_GNA_30_9","MF_GNA_30_9.bmp");
+    showSavePicture(MF_GNA_10_25,"MF_GNA_10_25","MF_GNA_10_25.bmp");
+    showSavePicture(MF_GNA_30_25,"MF_GNA_30_25","MF_GNA_30_25.bmp");
+    showSavePicture(MF_SAP_01_9,"MF_SAP_01_9","MF_SAP_01_9.bmp");
+    showSavePicture(MF_SAP_005_9,"MF_SAP_005_9","MF_SAP_005_9.bmp");
+    showSavePicture(MF_SAP_01_25,"MF_SAP_01_25","MF_SAP_01_25.bmp");
+    showSavePicture(MF_SAP_005_25,"MF_SAP_005_25","MF_SAP_005_25.bmp");
+
+    waitKey(0);
+    return 0;
+}

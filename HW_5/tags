@@ -1,0 +1,32 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+CC	Makefile	/^CC = g++$/;"	m
+CFILE	Makefile	/^CFILE = hw8.cpp $/;"	m
+GaussianNoiseAmplitude	hw8.cpp	/^Mat GaussianNoiseAmplitude(int row, int col, int amplitude, Mat input)$/;"	f	signature:(int row, int col, int amplitude, Mat input)
+Normal	hw8.cpp	/^double Normal( void  )$/;"	f	signature:( void )
+boxFilter	hw8.cpp	/^Mat boxFilter(int row, int col, int boxSize, Mat input)$/;"	f	signature:(int row, int col, int boxSize, Mat input)
+closing	hw5.cpp	/^Mat closing(Mat src, int row, int col)$/;"	f	signature:(Mat src, int row, int col)
+closing	hw8.cpp	/^Mat closing(Mat src, int row, int col)$/;"	f	signature:(Mat src, int row, int col)
+dilation	hw5.cpp	/^Mat dilation(Mat dila, Mat src, int row, int col)$/;"	f	signature:(Mat dila, Mat src, int row, int col)
+dilation	hw8.cpp	/^Mat dilation(Mat dila, Mat src, int row, int col)$/;"	f	signature:(Mat dila, Mat src, int row, int col)
+erosion	hw5.cpp	/^Mat erosion(Mat eros, Mat src, int row, int col)$/;"	f	signature:(Mat eros, Mat src, int row, int col)
+erosion	hw8.cpp	/^Mat erosion(Mat eros, Mat src, int row, int col)$/;"	f	signature:(Mat eros, Mat src, int row, int col)
+erosionA	hw5.cpp	/^Mat erosionA(Mat eros, Mat src, int row, int col)$/;"	f	signature:(Mat eros, Mat src, int row, int col)
+erosionB	hw5.cpp	/^Mat erosionB(Mat eros, Mat src, int row, int col)$/;"	f	signature:(Mat eros, Mat src, int row, int col)
+hit_and_miss	hw5.cpp	/^Mat hit_and_miss(Mat src,int row,int col)$/;"	f	signature:(Mat src,int row,int col)
+main	hw5.cpp	/^int main(int argc,char** argv )$/;"	f	signature:(int argc,char** argv )
+main	hw8.cpp	/^int main(int argc,char** argv )$/;"	f	signature:(int argc,char** argv )
+median	hw8.cpp	/^int median(int arr[], int numOfelement)$/;"	f	signature:(int arr[], int numOfelement)
+medianFilter	hw8.cpp	/^Mat medianFilter(int row, int col, int boxSize, Mat input)$/;"	f	signature:(int row, int col, int boxSize, Mat input)
+opening	hw5.cpp	/^Mat opening(Mat src, int row, int col)$/;"	f	signature:(Mat src, int row, int col)
+opening	hw8.cpp	/^Mat opening(Mat src, int row, int col)$/;"	f	signature:(Mat src, int row, int col)
+openingThenClosing	hw8.cpp	/^Mat openingThenClosing(int row, int col, Mat input)$/;"	f	signature:(int row, int col, Mat input)
+picInitialSrc	hw5.cpp	/^Mat picInitialSrc(Mat pic, Mat src, int row, int col)$/;"	f	signature:(Mat pic, Mat src, int row, int col)
+picInitialSrc	hw8.cpp	/^Mat picInitialSrc(Mat pic, Mat src, int row, int col)$/;"	f	signature:(Mat pic, Mat src, int row, int col)
+saltAndPepperUniform	hw8.cpp	/^Mat saltAndPepperUniform(int row, int col, double uniform, Mat input)$/;"	f	signature:(int row, int col, double uniform, Mat input)
+showSavePicture	hw5.cpp	/^void showSavePicture(Mat picture,string windowName,string saveName)$/;"	f	signature:(Mat picture,string windowName,string saveName)
+showSavePicture	hw8.cpp	/^void showSavePicture(Mat picture,string windowName,string saveName)$/;"	f	signature:(Mat picture,string windowName,string saveName)
